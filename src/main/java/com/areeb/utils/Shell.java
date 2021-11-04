@@ -1,9 +1,10 @@
 package com.areeb.utils;
 
 import java.io.*;
+import java.util.stream.Stream;
 
 public class Shell {
-    private BufferedReader out;
+    private InputStream out;
     private PrintWriter in;
     private Process shell;
     private boolean isAlive;
@@ -13,7 +14,7 @@ public class Shell {
         pb.directory(new File(System.getProperty("user.home")));
         shell = pb.start();
         isAlive = true;
-        out = new BufferedReader(new InputStreamReader(shell.getInputStream()));
+        out = shell.getInputStream();
         in = new PrintWriter(shell.getOutputStream());
 
         new Thread(() -> {
@@ -36,12 +37,17 @@ public class Shell {
         Thread.sleep(500);
     }
 
-    public String readOutput() throws IOException {
-        StringBuilder output = new StringBuilder();
-        while (out.ready()) {
-            output.append(out.readLine());
-            output.append("\n");
+    public String getOutput() throws IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        readOutput(outStream);
+        return outStream.toString();
+    }
+
+    public void readOutput(OutputStream toStream) throws IOException {
+        while (out.available() > 0) {
+            byte[] buff = new byte[1024];
+            out.read(buff, 0, 1024);
+            toStream.write(buff);
         }
-        return output.toString().trim();
     }
 }

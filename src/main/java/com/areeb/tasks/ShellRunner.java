@@ -42,7 +42,7 @@ public class ShellRunner implements TelnetTask {
             e.printStackTrace();
         }
 
-        return shell.readOutput().trim();
+        return shell.getOutput().trim();
     }
 
     private void printPrompt() throws IOException {
@@ -59,7 +59,7 @@ public class ShellRunner implements TelnetTask {
                 e.printStackTrace(connection.getWriter());
                 connection.getWriter().flush();
             }
-            connection.writeLine(shell.readOutput());
+            shell.readOutput(connection.getOutputStream());
         }
 
         if (!shell.isAlive()) {

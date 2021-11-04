@@ -12,9 +12,12 @@ import java.util.List;
 
 public class SocketHandler extends Thread {
     Connection connection;
+    Socket socket;
 
     SocketHandler(Socket connection) throws IOException {
         this.connection = new Connection(connection);
+        this.socket = connection;
+        System.out.println("New connection: " + connection.getInetAddress());
     }
 
     public void handle() throws IOException {
@@ -26,6 +29,7 @@ public class SocketHandler extends Thread {
     public void run() {
         try {
             this.handle();
+            System.out.println("Connection closing: " + socket.getInetAddress());
         } catch (IOException e) {
             e.printStackTrace();
         }
